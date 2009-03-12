@@ -109,8 +109,12 @@ module Paperclip
     # include_updated_timestamp to false if you want to stop the attachment
     # update time appended to the url
     def url style = default_style, include_updated_timestamp = true
-      url = original_filename.nil? ? interpolate(@default_url, style) : interpolate(@url, style)
-      include_updated_timestamp && updated_at ? [url, updated_at].compact.join(url.include?("?") ? "&" : "?") : url
+      if content_type && !content_type.match(/image\/.+/) && style == :thumb
+        '/public/images/video_thumbnail.png'
+      else
+        url = original_filename.nil? ? interpolate(@default_url, style) : interpolate(@url, style)
+        include_updated_timestamp && updated_at ? [url, updated_at].compact.join(url.include?("?") ? "&" : "?") : url
+      end
     end
 
     # Returns the path of the attachment as defined by the :path option. If the
