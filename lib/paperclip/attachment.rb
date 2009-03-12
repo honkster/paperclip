@@ -110,7 +110,7 @@ module Paperclip
     # update time appended to the url
     def url style = default_style, include_updated_timestamp = true
       if content_type && !content_type.match(/image\/.+/) && style == :thumb
-        '/public/images/video_thumbnail.png'
+        '/public/images/video_thumbnail.jpg'
       else
         url = original_filename.nil? ? interpolate(@default_url, style) : interpolate(@url, style)
         include_updated_timestamp && updated_at ? [url, updated_at].compact.join(url.include?("?") ? "&" : "?") : url
