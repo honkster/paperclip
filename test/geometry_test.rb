@@ -65,7 +65,7 @@ class GeometryTest < Test::Unit::TestCase
         assert_equal "123x456#{mod}", @geo.to_s
       end
     end
-    
+
     ['>', '<', '#', '@', '%', '^', '!', nil].each do |mod|
       should "ensure the modifier #{mod.inspect} is preserved with no height" do
         assert @geo = Paperclip::Geometry.parse("123x#{mod}")
@@ -77,7 +77,7 @@ class GeometryTest < Test::Unit::TestCase
     should "make sure the modifier gets passed during transformation_to" do
       assert @src = Paperclip::Geometry.parse("123x456")
       assert @dst = Paperclip::Geometry.parse("123x456>")
-      assert_equal "123x456>", @src.transformation_to(@dst).to_s
+      assert_equal ["123x456>", nil], @src.transformation_to(@dst)
     end
 
     should "generate correct ImageMagick formatting string for W-formatted string" do

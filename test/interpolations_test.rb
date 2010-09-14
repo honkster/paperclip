@@ -7,16 +7,20 @@ class InterpolationsTest < Test::Unit::TestCase
     assert ! methods.include?(:[]=)
     assert ! methods.include?(:all)
     methods.each do |m|
-      assert Paperclip::Interpolations.respond_to? m
+      assert Paperclip::Interpolations.respond_to?(m)
     end
   end
 
-  should "return the RAILS_ROOT" do
-    assert_equal RAILS_ROOT, Paperclip::Interpolations.rails_root(:attachment, :style)
+  should "return the Rails.root" do
+    assert_equal Rails.root, Paperclip::Interpolations.rails_root(:attachment, :style)
   end
 
-  should "return the RAILS_ENV" do
-    assert_equal RAILS_ENV, Paperclip::Interpolations.rails_env(:attachment, :style)
+  should "return the Rails.env" do
+    assert_equal Rails.env, Paperclip::Interpolations.rails_env(:attachment, :style)
+  end
+
+  should "return the class of the Interpolations module when called with no params" do
+    assert_equal Module, Paperclip::Interpolations.class
   end
 
   should "return the class of the instance" do
@@ -78,14 +82,17 @@ class InterpolationsTest < Test::Unit::TestCase
 
   should "reinterpolate :url" do
     attachment = mock
-    attachment.expects(:options).returns({:url => ":id"})
     attachment.expects(:url).with(:style, false).returns("1234")
     assert_equal "1234", Paperclip::Interpolations.url(attachment, :style)
   end
 
   should "raise if infinite loop detcted reinterpolating :url" do
-    attachment = mock
-    attachment.expects(:options).returns({:url => ":url"})
+    attachment = Object.new
+    class << attachment
+      def url(*args)
+        Paperclip::Interpolations.url(self, :style)
+      end
+    end
     assert_raises(Paperclip::InfiniteInterpolationError){ Paperclip::Interpolations.url(attachment, :style) }
   end
 
